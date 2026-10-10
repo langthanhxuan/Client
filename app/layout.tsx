@@ -16,6 +16,23 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Suspense } from "react";
+import Profile from "@/components/main/Profile";
+
+function ProfileSkeleton() {
+  return (
+    <output
+      aria-label="Đang tải tài khoản"
+      aria-busy="true"
+      className="hidden items-center gap-3 md:flex"
+    >
+      <span
+        aria-hidden="true"
+        className="h-10 w-10 animate-pulse rounded-full bg-[#dce9df]"
+      />
+    </output>
+  );
+}
 
 export const metadata: Metadata = {
   title: "Làng Thanh Xuân",
@@ -71,14 +88,9 @@ export default function RootLayout({
             </nav>
 
             {/* Desktop Right CTA / User Action */}
-            <div className="hidden items-center gap-3 md:flex">
-              <Link
-                href="/auth"
-                className="inline-flex h-10 items-center justify-center rounded-full bg-(--main-color-text) px-5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-[#343b12] hover:shadow active:scale-95"
-              >
-                Đăng nhập
-              </Link>
-            </div>
+            <Suspense fallback={<ProfileSkeleton />}>
+              <Profile />
+            </Suspense>
           </div>
         </header>
 

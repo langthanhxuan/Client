@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { useState } from "react";
 import google from "@/public/google.svg";
 
@@ -10,28 +10,25 @@ import google from "@/public/google.svg";
  * Handles Step 1 of the authentication flow: Google OAuth sign-in.
  */
 export default function GoogleAuth() {
-  // Navigation router for query parameter step transitions
-  const router = useRouter();
-
   // Loading state to disable button and show processing text during OAuth trigger
   const [isLoading, setIsLoading] = useState(false);
 
   /**
    * Triggers the Google Sign-in flow.
-   * In production: connects with NextAuth / backend OAuth endpoint.
-   * On success: transitions user to Step 2 (Phone Number verification).
+   * On success: redirects to Step 2 (Phone Number verification).
    */
   async function handleGoogleSignIn() {
     setIsLoading(true);
+    try {
+      const res = await signIn("google", {
+        callbackUrl: "/auth?step=phone",
+        redirect: false,
+      });
 
-    // TODO: Replace simulation with actual OAuth call (e.g. signIn("google"))
-    setTimeout(() => {
-      //! Being disabled due to providers cannot be found
-      // Transition URL state to trigger phone verification step
-      // router.push("/auth?step=phone");
-
-      router.push("/auth/signup");
-    }, 400);
+      if (res?.url) window.location.href = res.url;
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
